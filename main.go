@@ -156,10 +156,11 @@ func getSyncV3DeviceMessages(syncv3db string, userId string, deviceId string) ([
 		return nil, err
 	}
 	defer db.Close()
-	rows, err := db.Query("SELECT event_type, sender, message FROM syncv3_to_device_messages WHERE user_id = $1 AND device_id = $2", userId, deviceId)
+	rows, err := db.Query("SELECT event_type, sender, message FROM syncv3_to_device_messages WHERE user_id = $1 AND device_id = $2 ORDER BY position ASC", userId, deviceId)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	messages := make([]*deviceMessage, 0)
 	for rows.Next() {
 		msg := &deviceMessage{}
